@@ -1,109 +1,72 @@
-import { useState, useEffect } from "react";
-import Header from "./Header";
-import Filter from "./Filter";
-import PersonForm from "./PersonForm";
-import Persons from "./Persons";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.css";
 
-const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNumber] = useState("");
-  const [filtered, setFiltered] = useState("");
+function App() {
+  const [items, setItems] = useState([]);
+  const [newItemName, setNewItemName] = useState("");
+  const [newItemNumber, setNewItemNumber] = useState("");
 
   useEffect(() => {
-    console.log("effect");
     axios.get("http://localhost:3002/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
+      setItems(response.data);
     });
   }, []);
-  console.log("render", persons.length, "persons");
 
-  const addName = (event) => {
-    event.preventDefault();
-    const personObject = {
-      name: newName,
-      number: newNumber,
-      id: persons.length + 1,
-      // date: new Date().toISOString(),
-      // important: Math.random() < 0.5,
-    };
+  const deleteItem = (id) => {
+    setItems(items.filter((i) => i.id !== id));
+    console.log(id);
+    axios.delete(`http://localhost:3002/persons/${id}`).then(() => {
+      setItems(persons);
+    });
+  };
 
+  const addItem = () => {
     axios
-      .post("http://localhost:3002/persons", personObject)
+      .post("http://localhost:3002/persons", {
+        id: String(items.length + 1),
+        name: newItemName,
+        number: newItemNumber,
+      })
       .then((response) => {
-        console.log("post", response);
-        setPersons(persons.concat(response.data));
-        setNewName("");
-        setNumber("");
+        setItems(items.concat(response.data));
+        setNewItemName("");
+        setNewItemNumber("");
       });
-
-    // axios.put("http://localhost:3002/persons", personObject);
-    // console.log("put", response);
-    // return request.then((response) => response.data);
-
-    // eslint-disable-next-line
-    persons.map(function (person, index) {
-      if (person.name === newName) {
-        alert(`${person.name} is already added to phonebook`);
-        setPersons(persons.concat(""));
-        return <li key={index}>{person}</li>;
-      }
-    });
   };
 
-  const handleNameChange = (event) => {
-    console.log(event.target.value, `target name`);
-    setNewName(event.target.value);
+  const handleNewNameChange = (event) => {
+    setNewItemName(event.target.value);
   };
 
-  const handleNumberChange = (event) => {
-    console.log(event.target.value, `target number`);
-    setNumber(event.target.value);
-  };
-
-  const handleFilterChange = (event) => {
-    setFiltered(event.target.value, `target filter`);
-  };
-
-  const filterPerson = (event) => {
-    console.log(filtered, `filtered`);
-    event.preventDefault();
-
-    let result = "no";
-    // eslint-disable-next-line
-    persons.map(function (person) {
-      if (person.name.startsWith(filtered) === true) {
-        setFiltered(`${person.name} ${person.number}`);
-        result = person.name;
-        return <li key={person.id}>{person.number}</li>;
-      }
-    });
-
-    return <ul> is {result}</ul>;
+  const handleNewNumberChange = (event) => {
+    setNewItemNumber(event.target.value);
   };
 
   return (
     <div>
-      <Header text="Phonebook" />
-      <Filter
-        handleFilterChange={handleFilterChange}
-        filtered={filtered}
-        filterPerson={filterPerson}
-      />
-      <Header text="Add a new" />
-      <PersonForm
-        addName={addName}
-        newName={newName}
-        handleNameChange={handleNameChange}
-        newNumber={newNumber}
-        handleNumberChange={handleNumberChange}
-      />
-      <Header text="Numbers" />
-      <Persons persons={persons} />
+      <div>
+        <input type="text" value={newItemName} onChange={handleNewNameChange} />
+        <input
+          type="tel"
+          value={newItemNumber}
+          onChange={handleNewNumberChange}
+        />
+        <button onClick={addItem} className="bt btn-success">
+          Add Item
+        </button>
+      </div>
+
+      {items.map((item) => {
+        return (
+          <div key={item.id}>
+            {item.name} {item.number}
+            <button onClick={() => deleteItem(item.id)}>Delete</button>
+          </div>
+        );
+      })}
     </div>
   );
-};
+}
 
 export default App;
