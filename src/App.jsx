@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Filter from "./Filter";
 import axios from "axios";
+import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
 
 function App() {
@@ -18,12 +19,14 @@ function App() {
 
   const deleteItem = (id) => {
     console.log(id);
-    if (confirm("Are you sure you want to delete?") === false);
-    setItems(items.filter((i) => i.id));
 
-    axios.delete(`http://localhost:3002/persons/${id}`).then(() => {
-      setItems(items.filter((i) => i.id !== id));
-    });
+    if (confirm("Are you sure you want to delete?")) {
+      axios.delete(`http://localhost:3002/persons/${id}`).then(() => {
+        setItems(items.filter((i) => i.id !== id));
+      });
+    } else {
+      return false;
+    }
   };
 
   const addItem = () => {
@@ -78,7 +81,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="body">
       <Header text="Phonebook" />
       <Filter
         handleFilterChange={handleFilterChange}
@@ -100,7 +103,7 @@ function App() {
 
       {items.map((item) => {
         return (
-          <div key={item.id}>
+          <div key={item.id} className="list">
             {item.name} {item.number}
             <button onClick={() => deleteItem(item.id)}>Delete</button>
           </div>
