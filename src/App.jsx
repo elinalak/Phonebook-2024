@@ -18,6 +18,9 @@ function App() {
 
   const deleteItem = (id) => {
     console.log(id);
+    if (confirm("Are you sure you want to delete?") === false);
+    setItems(items.filter((i) => i.id));
+
     axios.delete(`http://localhost:3002/persons/${id}`).then(() => {
       setItems(items.filter((i) => i.id !== id));
     });
