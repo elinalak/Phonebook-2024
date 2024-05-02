@@ -3,11 +3,11 @@ h2 {
   font-style: italic;
 }
 .body {
-  background: aquamarine;
+  background: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
 }
 
 .list {
-  background: aqua;
+  background: background: linear-gradient(89.9deg, rgb(208, 246, 255) 0.1%, rgb(255, 237, 237) 47.9%, rgb(255, 255, 231) 100.2%);
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }

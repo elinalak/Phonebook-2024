@@ -44,7 +44,7 @@ function App() {
         items.map(function (person, index) {
           if (person.name === newItemName) {
             alert(`${person.name} is already added to phonebook`);
-            setItems(items.concat(""));
+            setItems(items.concat(response.data));
             return <li key={index}>{person}</li>;
           }
         });
